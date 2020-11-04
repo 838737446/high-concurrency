@@ -12,7 +12,7 @@ import java.util.concurrent.*;
  * @Date:Created in 2020/11/4 15:03
  * @Modified:
  */
-public class LwtCache {
+public class LwtCache<A,V> {
 
     /**
      * 用于存储缓存数据，使用ConcurrentHashMap保证线程安全
@@ -24,6 +24,8 @@ public class LwtCache {
     public LwtCache(Computable<String, Integer> c) {
         this.c = c;
     }
+
+    public final static ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
 
     /**
      * 获取缓存
@@ -63,6 +65,25 @@ public class LwtCache {
         }
     }
 
+    private Integer getCache(String userId,long expire) throws Exception {
+        if(expire>0){
+            executor.schedule(() -> expire(userId),expire,TimeUnit.MILLISECONDS);
+        }
+        return getCache(userId);
+    }
+
+    public synchronized void expire(String key) {
+        Future<Integer> future = cache.get(key);
+        if (future != null) {
+            if (!future.isDone()) {
+                System.out.println("Future任务被取消");
+                future.cancel(true);
+            }
+            System.out.println("过期时间到，缓存被清除");
+            cache.remove(key);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         LwtCache lwtCache = new LwtCache(new MayFail());
 //        System.out.println(lwtCache.getCache("222"));
@@ -72,7 +93,7 @@ public class LwtCache {
             @Override
             public void run() {
                 try {
-                    Integer result = lwtCache.getCache("666");
+                    Integer result = lwtCache.getCache("666",2000);
                     System.out.println("第一次的计算结果："+result);
                 } catch (Exception e) {
                     e.printStackTrace();
