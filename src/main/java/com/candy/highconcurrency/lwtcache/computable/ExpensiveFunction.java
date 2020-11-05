@@ -12,6 +12,7 @@ public class ExpensiveFunction implements Computable<String, Integer> {
     public Integer computer(String arg) throws Exception {
         try {
             Thread.sleep(5000);
+            System.out.println(arg + "FutureTask计算了函数");
         }catch (InterruptedException e){
             e.printStackTrace();
         }

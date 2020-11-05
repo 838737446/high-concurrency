@@ -14,6 +14,7 @@ public class MayFail implements Computable<String, Integer>{
             throw new IOException("读取文件出错");
         }
         Thread.sleep(3000);
+        System.out.println(arg + "FutureTask计算了函数");
         return Integer.valueOf(arg);
     }
 }
