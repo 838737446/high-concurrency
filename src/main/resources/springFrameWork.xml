@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byType">
+
+    <bean name="userDao" class="com.candy.spring.dao.UserDaoImpl">
+
+    </bean>
+
+    <bean name="userService" class="com.candy.spring.service.UserServiceImpl">
+<!--        增加了default-autowire="byType" 自动转配后就不用写这段-->
+<!--        <property name="userDao" ref="userDao"></property>-->
+    </bean>
+
+</beans>
